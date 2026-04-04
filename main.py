@@ -430,8 +430,10 @@ async def analyze(req: ImageRequest):
                         hand_name = raw_name
                     elif raw_name == "Flush":
                         hand_name = get_flush_name(hole_cards, board_cards)
-                    else:
+                    elif raw_name == "Pair":
                         hand_name = get_pair_type(hole_cards, board_cards, raw_name)
+                    else:
+                        hand_name = raw_name
                 # Add draw detection for weak hands
                 if raw_name in ["High Card", "Pair"] or raw_name is None:
                     draws = detect_draws(hole_cards, board_cards)
