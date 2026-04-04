@@ -406,6 +406,8 @@ async def analyze(req: ImageRequest):
         hole_cards = parse_cards(my_hand_str)
         board_cards = parse_cards(board_str)
         board_stage = get_board_stage(board_cards)
+        # Debug: if board_str has content but board_cards is empty, something went wrong
+        debug_info = f"hole_str='{my_hand_str}' hole_parsed={len(hole_cards)} board_str='{board_str}' board_parsed={len(board_cards)}" 
 
         win_pct = 0
         hand_name = "Nicht erkennbar"
@@ -454,7 +456,7 @@ async def analyze(req: ImageRequest):
             "boardTexture": "",
             "opponentRanges": "",
             "analysis": analysis_text,
-            "whatISee": ""
+            "whatISee": debug_info if len(board_cards)==0 and board_str else ""
         }
 
 @app.get("/")
