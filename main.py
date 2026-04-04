@@ -417,7 +417,7 @@ async def analyze(req: ImageRequest):
                 hand_name = "Preflop Starthand"
                 hand_strength = "Stark" if win_pct >= 60 else "Mittel" if win_pct >= 45 else "Schwach"
             elif len(board_cards) >= 3:
-                raw_name, hand_strength = get_hand_info(hole_cards, board_cards)
+                raw_name, _ = get_hand_info(hole_cards, board_cards)
                 if raw_name:
                     if raw_name in ["Royal Flush", "Straight Flush"]:
                         hand_name = raw_name
