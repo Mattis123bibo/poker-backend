@@ -238,68 +238,71 @@ def get_flush_name(hole_cards, board_cards):
     return "Flush"
 
 def generate_analysis(hand_name, hand_strength, win_pct, opponents, board_stage, my_hand_str, board_str):
-    """Generate clean analysis text without markdown"""
-    lines = []
+    """Generate clean analysis text based on win% - always consistent"""
 
     # Hand description
-    if "Flush" in hand_name and "Draw" not in hand_name:
-        lines.append(f"Du hast einen {hand_name} — eine sehr starke Hand.")
-    elif "Straight" in hand_name and "Draw" not in hand_name:
-        lines.append(f"Du hast eine {hand_name} — eine sehr starke Hand.")
-    elif "Full House" in hand_name:
-        lines.append(f"Du hast ein {hand_name} — eine der stärksten Hände.")
+    if "Royal Flush" in hand_name:
+        hand_desc = f"Du hast einen Royal Flush — die bestmögliche Hand überhaupt!"
+    elif "Straight Flush" in hand_name:
+        hand_desc = f"Du hast einen Straight Flush — fast unschlagbar."
     elif "Four of a Kind" in hand_name:
-        lines.append(f"Du hast {hand_name} — extrem starke Hand.")
-    elif "Royal Flush" in hand_name or "Straight Flush" in hand_name:
-        lines.append(f"Du hast einen {hand_name} — die bestmögliche Hand!")
-    elif "Nut Flush Draw" in hand_name:
-        lines.append(f"Du hast den {hand_name} — die bestmögliche Flush Draw. Nur eine Karte fehlt für den Nuts Flush.")
-    elif "Flush Draw" in hand_name:
-        lines.append(f"Du hast einen {hand_name} — eine Karte fehlt für den Flush.")
-    elif "OESD" in hand_name:
-        lines.append(f"Du hast einen Open Ended Straight Draw — 8 Outs für die Straße.")
-    elif "Gutshot" in hand_name:
-        lines.append(f"Du hast einen Gutshot Straight Draw — 4 Outs für die Straße.")
-    elif "Top Pair" in hand_name:
-        lines.append(f"Du hast Top Pair — Paar mit der höchsten Board-Karte.")
-    elif "Middle Pair" in hand_name:
-        lines.append(f"Du hast Middle Pair — Paar mit der zweithöchsten Board-Karte.")
-    elif "Bottom Pair" in hand_name:
-        lines.append(f"Du hast Bottom Pair — Paar mit der niedrigsten Board-Karte.")
-    elif "Overpair" in hand_name:
-        lines.append(f"Du hast ein Overpair — dein Pocket Pair ist höher als alle Board-Karten.")
-    elif "Two Pair" in hand_name:
-        lines.append(f"Du hast Two Pair — zwei Paare.")
+        hand_desc = f"Du hast Four of a Kind — extrem starke Hand."
+    elif "Full House" in hand_name:
+        hand_desc = f"Du hast ein Full House."
+    elif "Flush" in hand_name and "Draw" not in hand_name:
+        hand_desc = f"Du hast einen {hand_name}."
+    elif "Straight" in hand_name and "Draw" not in hand_name:
+        hand_desc = f"Du hast eine Straße."
     elif "Three of a Kind" in hand_name:
-        lines.append(f"Du hast einen Drilling — drei gleiche Karten.")
-    elif "Preflop" in hand_name:
-        lines.append(f"Preflop Analyse deiner Starthand.")
+        hand_desc = f"Du hast einen Drilling."
+    elif "Two Pair" in hand_name:
+        hand_desc = f"Du hast Two Pair."
+    elif "Overpair" in hand_name:
+        hand_desc = f"Du hast ein Overpair — dein Pocket Pair schlägt alle Board-Karten."
+    elif "Top Pair" in hand_name:
+        hand_desc = f"Du hast Top Pair."
+    elif "Middle Pair" in hand_name:
+        hand_desc = f"Du hast Middle Pair."
+    elif "Bottom Pair" in hand_name:
+        hand_desc = f"Du hast Bottom Pair."
+    elif "Nut Flush Draw" in hand_name:
+        hand_desc = f"Du hast den Nut Flush Draw — beste mögliche Flush Draw."
+    elif "Flush Draw" in hand_name:
+        hand_desc = f"Du hast einen {hand_name}."
+    elif "OESD" in hand_name:
+        hand_desc = f"Du hast einen Open Ended Straight Draw — 8 Outs."
+    elif "Gutshot" in hand_name:
+        hand_desc = f"Du hast einen Gutshot Straight Draw — 4 Outs."
     else:
-        lines.append(f"Du hast {hand_name}.")
+        hand_desc = f"Du hast {hand_name}."
 
-    # Win% explanation
+    # Win% based assessment
     if win_pct >= 90:
-        lines.append(f"Mit {win_pct}% Gewinnchance gegen {opponents} Gegner dominierst du fast alle möglichen Hände.")
+        assessment = f"Mit {win_pct}% Gewinnchance gegen {opponents} Gegner bist du klarer Favorit — raise für maximalen Value."
     elif win_pct >= 75:
-        lines.append(f"Mit {win_pct}% Gewinnchance gegen {opponents} Gegner bist du klarer Favorit.")
+        assessment = f"Mit {win_pct}% Gewinnchance gegen {opponents} Gegner hast du eine starke Hand — raise für Value."
     elif win_pct >= 60:
-        lines.append(f"Mit {win_pct}% Gewinnchance gegen {opponents} Gegner bist du leichter Favorit.")
+        assessment = f"Mit {win_pct}% Gewinnchance gegen {opponents} Gegner bist du Favorit — raise oder call."
     elif win_pct >= 45:
-        lines.append(f"Mit {win_pct}% Gewinnchance gegen {opponents} Gegner ist die Situation ausgeglichen.")
+        assessment = f"Mit {win_pct}% Gewinnchance gegen {opponents} Gegner ist die Situation ausgeglichen — call oder check."
+    elif win_pct >= 30:
+        assessment = f"Mit {win_pct}% Gewinnchance gegen {opponents} Gegner bist du Außenseiter — check oder fold."
     else:
-        lines.append(f"Mit {win_pct}% Gewinnchance gegen {opponents} Gegner bist du Außenseiter.")
+        assessment = f"Mit nur {win_pct}% Gewinnchance gegen {opponents} Gegner ist die Hand zu schwach — fold empfohlen."
 
-    # Board stage context
+    # Board stage
     if board_stage == "Preflop":
-        lines.append("Preflop: Entscheide ob du raisen, callen oder folden willst basierend auf deiner Position.")
+        stage_info = "Preflop."
     elif board_stage == "Flop":
-        lines.append("Am Flop: Noch Turn und River kommen — viel kann sich ändern.")
+        stage_info = "Noch Turn und River kommen."
     elif board_stage == "Turn":
-        lines.append("Am Turn: Noch eine Karte kommt — der River entscheidet.")
+        stage_info = "Noch eine Karte — der River."
     elif board_stage == "River":
-        lines.append("Am River: Alle Karten liegen — was du jetzt hast ist deine finale Hand.")
+        stage_info = "Alle Karten liegen — finale Hand."
+    else:
+        stage_info = ""
 
-    return " ".join(lines)
+    return f"{hand_desc} {assessment} {stage_info}".strip()
 
 def recommend_action(win_pct, board_stage, num_opponents):
     if win_pct >= 75:
@@ -447,7 +450,7 @@ async def analyze(req: ImageRequest):
             "handName": hand_name,
             "action": action,
             "actionReason": action_reason,
-            "sizing": sizing,
+            "sizing": "",
             "boardTexture": "",
             "opponentRanges": "",
             "analysis": analysis_text,
