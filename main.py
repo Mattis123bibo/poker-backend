@@ -96,18 +96,8 @@ def get_hand_info(hole_cards, board_cards):
         rank = evaluator.evaluate(board_cards, hole_cards)
         rank_class = evaluator.get_rank_class(rank)
         hand_name = evaluator.class_to_string(rank_class)
-        # Strength mapping
-        if rank_class == 1:   strength = "Sehr Stark"  # Royal Flush
-        elif rank_class == 2: strength = "Sehr Stark"  # Straight Flush
-        elif rank_class == 3: strength = "Sehr Stark"  # Four of a Kind
-        elif rank_class == 4: strength = "Sehr Stark"  # Full House
-        elif rank_class == 5: strength = "Stark"       # Flush
-        elif rank_class == 6: strength = "Stark"       # Straight
-        elif rank_class == 7: strength = "Stark"       # Three of a Kind
-        elif rank_class == 8: strength = "Mittel"      # Two Pair
-        elif rank_class == 9: strength = "Mittel"      # Pair
-        else:                  strength = "Schwach"    # High Card
-        return hand_name, strength
+        # Return only hand name, strength will be determined by win%
+        return hand_name, None
     except:
         return None, None
 
@@ -441,6 +431,7 @@ async def analyze(req: ImageRequest):
                         hand_name = " + ".join(draws) + (f" + {hand_name}" if raw_name and raw_name != "High Card" else "")
                         hand_strength = "Mittel"
                 win_pct = simulate_win_pct(hole_cards, board_cards, opponents, 3000)
+                hand_strength = win_pct_to_strength(win_pct)
 
         action, action_reason, sizing = recommend_action(win_pct, board_stage, opponents)
 
