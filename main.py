@@ -363,10 +363,13 @@ def get_board_stage(board_cards):
 async def analyze(req: ImageRequest):
     async with httpx.AsyncClient(timeout=90) as client:
 
-        if req.override:
+        if req.override and req.override.myHand:
+            # Manual recalc - use override cards directly, ignore image
             my_hand_str = req.override.myHand
             board_str = req.override.board
             opponents = req.override.opponents
+        elif not req.image or req.image in ['', 'ping']:
+            return {"error": "Kein Bild und keine Karten angegeben", "myHand": "", "board": "", "opponents": 1, "winPct": 0, "handStrength": "—", "handName": "—", "action": "—", "actionReason": "—", "sizing": "", "boardTexture": "", "opponentRanges": "", "analysis": "Bitte erst Foto machen oder Karten eingeben.", "whatISee": ""}
         else:
             resp = await client.post(
                 "https://api.anthropic.com/v1/messages",
