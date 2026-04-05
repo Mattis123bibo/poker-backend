@@ -184,38 +184,17 @@ def make_analysis(hand_name, win_pct, opponents, board_stage):
     stage = stage_map.get(board_stage, "")
     return f"{desc} {assess} {stage}".strip()
 
-IMAGE_PROMPT = """Du bist ein Poker-Kartenscanner für Texas Hold'em.
+IMAGE_PROMPT = """Du bist ein Poker-Kartenscanner. Antworte NUR mit JSON, kein Text davor oder danach.
 
-Analysiere das Bild in diesen Schritten — denke laut nach, dann gib JSON aus:
+HOLE CARDS: Die 2 Karten vorne unten im Bild (nah zur Kamera).
+BOARD: Karten in der Mitte, von links nach rechts. Flop=3, Turn=4, River=5.
+GEGNER: Verdeckte Karten zählen, minimum 1.
 
-SCHRITT 1 — PHYSISCHE KARTEN ZÄHLEN:
-Wie viele einzelne Karten siehst du insgesamt?
-- Vorne unten (nah zur Kamera) = meine HOLE CARDS (immer genau 2)
-- Mitte/hinten = BOARD Karten (3, 4 oder 5)
-- Jede Karte NUR EINMAL zählen!
-- Kleine gedrehte Kopie unten rechts auf jeder Karte = IGNORIEREN (gleiche Karte)
+WICHTIG:
+- Jede Karte nur EINMAL zählen — die kleine gedrehte Kopie unten rechts ignorieren!
+- ROT = ♥ oder ♦, SCHWARZ = ♠ oder ♣. Niemals verwechseln!
+- Genau 2 Hole Cards, nie mehr!
 
-SCHRITT 2 — JEDE KARTE EINZELN BESTIMMEN:
-Für jede Karte:
-a) Welcher WERT? (Schaue auf die große Zahl/Buchstabe oben links)
-   A=Ass, K=König, Q=Dame, J=Bube, T=10, 9,8,7,6,5,4,3,2
-b) Welche FARBE? Schaue auf das Symbol:
-   ♥ Herz = ROT (Herzform)
-   ♦ Karo = ROT (Raute/Diamant)  
-   ♠ Pik = SCHWARZ (Spaten, oben spitz zulaufend)
-   ♣ Kreuz = SCHWARZ (Kleeblatt, 3 runde Kreise)
-c) WICHTIG: Ist das Symbol ROT oder SCHWARZ? ROT=♥♦, SCHWARZ=♠♣ — niemals verwechseln!
-
-SCHRITT 3 — SELBST-KONTROLLE:
-- Habe ich genau 2 Hole Cards? (nicht mehr, nicht weniger)
-- Sind alle roten Symbole als ♥ oder ♦ eingetragen?
-- Sind alle schwarzen Symbole als ♠ oder ♣ eingetragen?
-- Habe ich die kleine gedrehte Zahl als extra Karte gezählt? → Fehler korrigieren!
-
-SCHRITT 4 — GEGNER:
-Verdeckte Karten (Kartenrücken) = Gegner zählen, minimum 1
-
-Antworte NUR als JSON:
 {"myHand":"K♠ 2♥","board":"T♠ 3♠ J♠","opponents":2,"confidence":"sicher"}"""
 
 class Override(BaseModel):
