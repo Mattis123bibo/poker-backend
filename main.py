@@ -184,22 +184,35 @@ def make_analysis(hand_name, win_pct, opponents, board_stage):
     stage = stage_map.get(board_stage, "")
     return f"{desc} {assess} {stage}".strip()
 
-IMAGE_PROMPT = """Du bist ein Poker-Kartenscanner. Erkenne alle Karten auf dem Bild und gib NUR JSON zurück.
+IMAGE_PROMPT = """Du bist ein Poker-Kartenscanner für Texas Hold'em. Gib NUR JSON zurück.
 
-FARBEN — für jede Karte prüfen:
-ROT: ♥ Herz, ♦ Karo
-SCHWARZ: ♠ Pik (Spaten oben spitz), ♣ Kreuz (Kleeblatt 3 Kreise)
-Nach Erkennung nochmal prüfen: rotes Symbol = NIEMALS ♠ oder ♣!
+SCHRITT 1 — KARTEN ZÄHLEN:
+Zähle zuerst wie viele physische Karten du siehst:
+• HOLE CARDS: genau 2 Karten vorne unten (nah zur Kamera)
+• BOARD: genau 3 Karten (Flop) ODER 4 (Turn) ODER 5 (River) in der Mitte
+• NIEMALS mehr als 2 Hole Cards und niemals mehr als 5 Board-Karten!
+• Jede physische Karte wird NUR EINMAL gezählt!
 
-POSITIONEN:
-• HOLE CARDS: 2 Karten GANZ VORNE UNTEN im Bild
-• BOARD: Karten in Tischmitte STRIKT von LINKS nach RECHTS (Flop=3, Turn=4, River=5)
-• Kleine umgedrehte Zahl unten rechts = IGNORIEREN
-• Reihenfolge NICHT verändern!
+SCHRITT 2 — FALSCHE ERKENNUNGEN VERMEIDEN:
+• Jede Karte zeigt ihren Wert oben links GROSS und unten rechts KLEIN+GEDREHT
+• Die kleine gedrehte Zahl unten rechts = GLEICHE Karte, NICHT extra Karte zählen!
+• Eine 9 umgedreht sieht aus wie 6 — ist aber dieselbe Karte!
+• Kartenrücken (verdeckte Karten) = Gegner, NICHT als Hole Card zählen!
+• Schatten, Tischmuster, Papier = KEINE Karten!
 
-GEGNER: Verdeckte Karten zählen → 1 Stapel = 1 Gegner, minimum 1
+SCHRITT 3 — FARBEN PRÜFEN:
+ROT: ♥ Herz (Herz-Symbol), ♦ Karo (Raute)
+SCHWARZ: ♠ Pik (Spaten, oben spitz), ♣ Kreuz (Kleeblatt, 3 runde Kreise)
+Nach jeder Karte nochmal prüfen: rotes Symbol = NIEMALS ♠ oder ♣!
 
-Antworte NUR als JSON:
+SCHRITT 4 — POSITIONEN:
+• HOLE CARDS: die 2 vordersten Karten unten im Bild (egal ob quer oder hochkant)
+• BOARD: Karten in Tischmitte, STRIKT von LINKS nach RECHTS lesen
+
+SCHRITT 5 — GEGNER:
+Verdeckte Kartenstapel zählen = Anzahl Gegner, minimum 1
+
+Antworte NUR als JSON ohne Text davor oder danach:
 {"myHand":"K♠ 2♥","board":"T♠ 3♠ J♠","opponents":2,"confidence":"sicher"}"""
 
 class Override(BaseModel):
