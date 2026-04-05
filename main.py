@@ -76,9 +76,21 @@ def get_flush_name(hole, board):
         suit_counts[cs].append(Card.get_rank_int(c))
     for s, ranks in suit_counts.items():
         if len(ranks) >= 5:
-            best = sorted(ranks, reverse=True)[0]
-            hc = rank_chars[best]
-            return f"{rank_names.get(hc,hc)}-High Flush ({suit_names.get(s,s)})"
+            sym = suit_names.get(s, s)
+            hole_ranks = [Card.get_rank_int(c) for c in hole if Card.int_to_str(c)[-1] == s]
+            board_ranks = [Card.get_rank_int(c) for c in board if Card.int_to_str(c)[-1] == s]
+            if not hole_ranks: return "Flush"
+            my_best = max(hole_ranks)
+            ace_rank = 12
+            king_rank = 11
+            # Nuts: I have the ace, or ace is on board and I have the king
+            if my_best == ace_rank:
+                return f"Ass-High Flush ({sym}) — Nuts"
+            if ace_rank in board_ranks and my_best == king_rank:
+                return f"König-High Flush ({sym}) — Nuts"
+            # Normal: named by MY highest card
+            hc = rank_chars[my_best]
+            return f"{rank_names.get(hc,hc)}-High Flush ({sym})"
     return "Flush"
 
 def get_pair_type(hole, board):
