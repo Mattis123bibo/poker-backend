@@ -186,14 +186,24 @@ def make_analysis(hand_name, win_pct, opponents, board_stage):
 
 IMAGE_PROMPT = """Du bist ein Poker-Kartenscanner. Antworte NUR mit JSON, kein Text davor oder danach.
 
-HOLE CARDS: Die 2 Karten vorne unten im Bild (nah zur Kamera).
-BOARD: Karten in der Mitte, von links nach rechts. Flop=3, Turn=4, River=5.
-GEGNER: Verdeckte Karten zählen, minimum 1.
+KARTENAUFBAU — SEHR WICHTIG:
+Jede Spielkarte zeigt den Wert an ZWEI Stellen:
+1. OBEN LINKS: groß und aufrecht → das ist der echte Wert, NUR DIESEN lesen!
+2. UNTEN RECHTS: klein und auf dem Kopf gedreht → KOMPLETT IGNORIEREN!
+Die untere Zahl ist DIESELBE Karte nochmal — sie darf NIEMALS als extra Karte gezählt werden!
+Beispiel: Eine 9 hat oben links "9" und unten rechts eine auf dem Kopf stehende "9" die wie "6" aussieht → es ist eine 9, KEINE 6!
 
-WICHTIG:
-- Jede Karte nur EINMAL zählen — die kleine gedrehte Kopie unten rechts ignorieren!
-- ROT = ♥ oder ♦, SCHWARZ = ♠ oder ♣. Niemals verwechseln!
-- Genau 2 Hole Cards, nie mehr!
+POSITIONEN:
+• HOLE CARDS: genau 2 Karten vorne unten im Bild (nah zur Kamera)
+• BOARD: Karten in der Mitte, strikt von LINKS nach RECHTS. Flop=3, Turn=4, River=5
+• Immer NUR den OBEN LINKS stehenden Wert lesen!
+
+FARBEN — nur das Symbol zählt:
+• ROT: ♥ Herz (Herzform) oder ♦ Karo (Raute)
+• SCHWARZ: ♠ Pik (Spaten, oben spitz) oder ♣ Kreuz (Kleeblatt, 3 Kreise)
+• Rotes Symbol = IMMER ♥ oder ♦, niemals ♠ oder ♣!
+
+GEGNER: Verdeckte Karten (Kartenrücken) zählen, minimum 1.
 
 {"myHand":"K♠ 2♥","board":"T♠ 3♠ J♠","opponents":2,"confidence":"sicher"}"""
 
