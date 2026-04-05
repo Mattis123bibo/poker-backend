@@ -184,35 +184,38 @@ def make_analysis(hand_name, win_pct, opponents, board_stage):
     stage = stage_map.get(board_stage, "")
     return f"{desc} {assess} {stage}".strip()
 
-IMAGE_PROMPT = """Du bist ein Poker-Kartenscanner für Texas Hold'em. Gib NUR JSON zurück.
+IMAGE_PROMPT = """Du bist ein Poker-Kartenscanner für Texas Hold'em.
 
-SCHRITT 1 — KARTEN ZÄHLEN:
-Zähle zuerst wie viele physische Karten du siehst:
-• HOLE CARDS: genau 2 Karten vorne unten (nah zur Kamera)
-• BOARD: genau 3 Karten (Flop) ODER 4 (Turn) ODER 5 (River) in der Mitte
-• NIEMALS mehr als 2 Hole Cards und niemals mehr als 5 Board-Karten!
-• Jede physische Karte wird NUR EINMAL gezählt!
+Analysiere das Bild in diesen Schritten — denke laut nach, dann gib JSON aus:
 
-SCHRITT 2 — FALSCHE ERKENNUNGEN VERMEIDEN:
-• Jede Karte zeigt ihren Wert oben links GROSS und unten rechts KLEIN+GEDREHT
-• Die kleine gedrehte Zahl unten rechts = GLEICHE Karte, NICHT extra Karte zählen!
-• Eine 9 umgedreht sieht aus wie 6 — ist aber dieselbe Karte!
-• Kartenrücken (verdeckte Karten) = Gegner, NICHT als Hole Card zählen!
-• Schatten, Tischmuster, Papier = KEINE Karten!
+SCHRITT 1 — PHYSISCHE KARTEN ZÄHLEN:
+Wie viele einzelne Karten siehst du insgesamt?
+- Vorne unten (nah zur Kamera) = meine HOLE CARDS (immer genau 2)
+- Mitte/hinten = BOARD Karten (3, 4 oder 5)
+- Jede Karte NUR EINMAL zählen!
+- Kleine gedrehte Kopie unten rechts auf jeder Karte = IGNORIEREN (gleiche Karte)
 
-SCHRITT 3 — FARBEN PRÜFEN:
-ROT: ♥ Herz (Herz-Symbol), ♦ Karo (Raute)
-SCHWARZ: ♠ Pik (Spaten, oben spitz), ♣ Kreuz (Kleeblatt, 3 runde Kreise)
-Nach jeder Karte nochmal prüfen: rotes Symbol = NIEMALS ♠ oder ♣!
+SCHRITT 2 — JEDE KARTE EINZELN BESTIMMEN:
+Für jede Karte:
+a) Welcher WERT? (Schaue auf die große Zahl/Buchstabe oben links)
+   A=Ass, K=König, Q=Dame, J=Bube, T=10, 9,8,7,6,5,4,3,2
+b) Welche FARBE? Schaue auf das Symbol:
+   ♥ Herz = ROT (Herzform)
+   ♦ Karo = ROT (Raute/Diamant)  
+   ♠ Pik = SCHWARZ (Spaten, oben spitz zulaufend)
+   ♣ Kreuz = SCHWARZ (Kleeblatt, 3 runde Kreise)
+c) WICHTIG: Ist das Symbol ROT oder SCHWARZ? ROT=♥♦, SCHWARZ=♠♣ — niemals verwechseln!
 
-SCHRITT 4 — POSITIONEN:
-• HOLE CARDS: die 2 vordersten Karten unten im Bild (egal ob quer oder hochkant)
-• BOARD: Karten in Tischmitte, STRIKT von LINKS nach RECHTS lesen
+SCHRITT 3 — SELBST-KONTROLLE:
+- Habe ich genau 2 Hole Cards? (nicht mehr, nicht weniger)
+- Sind alle roten Symbole als ♥ oder ♦ eingetragen?
+- Sind alle schwarzen Symbole als ♠ oder ♣ eingetragen?
+- Habe ich die kleine gedrehte Zahl als extra Karte gezählt? → Fehler korrigieren!
 
-SCHRITT 5 — GEGNER:
-Verdeckte Kartenstapel zählen = Anzahl Gegner, minimum 1
+SCHRITT 4 — GEGNER:
+Verdeckte Karten (Kartenrücken) = Gegner zählen, minimum 1
 
-Antworte NUR als JSON ohne Text davor oder danach:
+Antworte NUR als JSON:
 {"myHand":"K♠ 2♥","board":"T♠ 3♠ J♠","opponents":2,"confidence":"sicher"}"""
 
 class Override(BaseModel):
