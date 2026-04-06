@@ -184,26 +184,23 @@ def make_analysis(hand_name, win_pct, opponents, board_stage):
     stage = stage_map.get(board_stage, "")
     return f"{desc} {assess} {stage}".strip()
 
-IMAGE_PROMPT = """Du bist ein Poker-Kartenscanner. Antworte NUR mit JSON, kein Text davor oder danach.
+IMAGE_PROMPT = """Du bist ein Poker-Kartenscanner. Antworte NUR mit JSON.
 
-KARTENAUFBAU — SEHR WICHTIG:
-Jede Spielkarte zeigt den Wert an ZWEI Stellen:
-1. OBEN LINKS: groß und aufrecht → das ist der echte Wert, NUR DIESEN lesen!
-2. UNTEN RECHTS: klein und auf dem Kopf gedreht → KOMPLETT IGNORIEREN!
-Die untere Zahl ist DIESELBE Karte nochmal — sie darf NIEMALS als extra Karte gezählt werden!
-Beispiel: Eine 9 hat oben links "9" und unten rechts eine auf dem Kopf stehende "9" die wie "6" aussieht → es ist eine 9, KEINE 6!
+WICHTIGSTE REGEL — NUR OBEN LINKS LESEN:
+Jede Spielkarte hat ihren Wert und ihre Farbe OBEN LINKS in der Ecke.
+Lies AUSSCHLIESSLICH den Wert oben links — ignoriere alles andere auf der Karte!
+Die untere rechte Ecke zeigt dieselbe Karte nochmal gedreht — KOMPLETT IGNORIEREN!
+
+VORGEHEN FÜR JEDE KARTE:
+1. Schaue NUR auf die obere linke Ecke der Karte
+2. Lies den Wert (A, K, Q, J, T, 9, 8, 7, 6, 5, 4, 3, 2)
+3. Lies das Symbol darunter (♥ ♦ ♠ ♣)
+4. ROT = ♥ oder ♦ / SCHWARZ = ♠ oder ♣
 
 POSITIONEN:
-• HOLE CARDS: genau 2 Karten vorne unten im Bild (nah zur Kamera)
-• BOARD: Karten in der Mitte, strikt von LINKS nach RECHTS. Flop=3, Turn=4, River=5
-• Immer NUR den OBEN LINKS stehenden Wert lesen!
-
-FARBEN — nur das Symbol zählt:
-• ROT: ♥ Herz (Herzform) oder ♦ Karo (Raute)
-• SCHWARZ: ♠ Pik (Spaten, oben spitz) oder ♣ Kreuz (Kleeblatt, 3 Kreise)
-• Rotes Symbol = IMMER ♥ oder ♦, niemals ♠ oder ♣!
-
-GEGNER: Verdeckte Karten (Kartenrücken) zählen, minimum 1.
+• HOLE CARDS: genau 2 Karten vorne unten im Bild
+• BOARD: Karten in der Mitte, von links nach rechts (Flop=3, Turn=4, River=5)
+• GEGNER: verdeckte Karten zählen, minimum 1
 
 {"myHand":"K♠ 2♥","board":"T♠ 3♠ J♠","opponents":2,"confidence":"sicher"}"""
 
