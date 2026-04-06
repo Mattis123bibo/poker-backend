@@ -187,22 +187,40 @@ def make_analysis(hand_name, win_pct, opponents, board_stage):
 IMAGE_PROMPT = """Du bist ein Poker-Kartenscanner. Antworte NUR mit JSON.
 
 WICHTIGSTE REGEL — NUR OBEN LINKS LESEN:
-Jede Spielkarte hat ihren Wert und ihre Farbe OBEN LINKS in der Ecke.
-Lies AUSSCHLIESSLICH den Wert oben links — ignoriere alles andere auf der Karte!
-Die untere rechte Ecke zeigt dieselbe Karte nochmal gedreht — KOMPLETT IGNORIEREN!
+Lies AUSSCHLIESSLICH die obere linke Ecke jeder Karte — ignoriere alles andere!
+Die untere rechte Ecke = gleiche Karte gedreht = KOMPLETT IGNORIEREN!
 
-VORGEHEN FÜR JEDE KARTE:
-1. Schaue NUR auf die obere linke Ecke der Karte
-2. Lies den Wert (A, K, Q, J, T, 9, 8, 7, 6, 5, 4, 3, 2)
-3. Lies das Symbol darunter (♥ ♦ ♠ ♣)
-4. ROT = ♥ oder ♦ / SCHWARZ = ♠ oder ♣
+ALLE 4 SYMBOLE GENAUE BESCHREIBUNG:
+
+ROT — diese zwei Symbole sind immer rot:
+• ♥ HERZ: Oben zwei runde Bögen (wie zwei Kreise nebeneinander), unten läuft es spitz zusammen. Klassische Herzform. Farbe: ROT.
+• ♦ KARO: Eine Raute — vier gleich lange Seiten, oben spitz, unten spitz, links und rechts spitz. Wie ein auf der Spitze stehender Quadrat. Farbe: ROT.
+
+UNTERSCHIED HERZ vs KARO:
+♥ Herz: oben RUND (zwei Bögen), unten spitz
+♦ Karo: oben SPITZ, unten spitz — überall spitz, keine Rundungen!
+
+SCHWARZ — diese zwei Symbole sind immer schwarz:
+• ♠ PIK: Oben eine runde Spitze (wie ein umgekehrtes Herz — unten rund, oben spitz), darunter ein kurzer Stiel mit zwei kleinen Ausbuchtungen links und rechts.
+• ♣ KREUZ: Oben DREI runde Kreise (einer oben, einer links, einer rechts), darunter ein kurzer Stiel. Wie ein Kleeblatt mit drei Blättern.
+
+UNTERSCHIED PIK vs KREUZ:
+♠ Pik: oben EINE runde Spitze (wie Pfeilspitze nach oben)
+♣ Kreuz: oben DREI runde Kreise — wenn du drei Kreise siehst = immer ♣!
+
+FARBREGEL — niemals verwechseln:
+Rotes Symbol = immer ♥ oder ♦, NIEMALS ♠ oder ♣
+Schwarzes Symbol = immer ♠ oder ♣, NIEMALS ♥ oder ♦
+
+WENN KARTEN NAH BEIEINANDER:
+Jede Karte einzeln von links nach rechts — nur die eigene obere linke Ecke lesen!
 
 POSITIONEN:
 • HOLE CARDS: genau 2 Karten vorne unten im Bild
-• BOARD: Karten in der Mitte, von links nach rechts (Flop=3, Turn=4, River=5)
+• BOARD: Mitte, von links nach rechts (Flop=3, Turn=4, River=5)
 • GEGNER: verdeckte Karten zählen, minimum 1
 
-{"myHand":"K♠ 2♥","board":"T♠ 3♠ J♠","opponents":2,"confidence":"sicher"}"""
+{"myHand":"K♠ 2♥","board":"T♣ 3♦ J♠","opponents":2,"confidence":"sicher"}"""
 
 class Override(BaseModel):
     myHand: str = ""
